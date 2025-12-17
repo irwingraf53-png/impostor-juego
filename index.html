@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Impostor - Juego Familiar</title>
+<style>
+body{font-family:-apple-system,Segoe UI,Roboto,Arial;background:#f6f7fb;margin:0}
+.card{max-width:720px;margin:20px auto;background:#fff;border-radius:16px;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,.1)}
+button{padding:14px 16px;border-radius:12px;border:none;background:#111;color:#fff;font-size:16px;font-weight:600}
+.hidden{display:none}
+.name{font-size:26px;font-weight:800;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="card" id="app"></div>
+
+<script>
+const players=["Irwing","Gaby","Sofía","Santiago"];
+const words=[
+{w:"Balón",c:"redondo"},
+{w:"Helado",c:"frío"},
+{w:"Perro",c:"ladra"},
+{w:"Pizza",c:"rebanadas"},
+{w:"Carro",c:"ruedas"}
+];
+
+const app=document.getElementById("app");
+let state={};
+
+function start(){
+ const r=words[Math.floor(Math.random()*words.length)];
+ const imp=players[Math.floor(Math.random()*players.length)];
+ state={r,imp,i:0,order:[...players].sort(()=>Math.random()-.5)};
+ next();
+}
+
+function next(){
+ if(state.i>=state.order.length){
+  const starters=players.filter(p=>p!==state.imp);
+  app.innerHTML=`<h2>Empieza:</h2><div class="name">${starters[Math.floor(Math.random()*starters.length)]}</div><br><button onclick="start()">Nueva ronda</button>`;
+  return;
+ }
+ const p=state.order[state.i];
+ app.innerHTML=`<div class="name">${p}</div><button onclick="show('${p}')">Ver tarjeta</button>`;
+}
+
+function show(p){
+ if(p===state.imp){
+  app.innerHTML=`<h3>Eres el impostor</h3><div class="name">${state.r.c}</div><button onclick="hide()">Ocultar</button>`;
+ } else {
+  app.innerHTML=`<h3>Tu palabra es</h3><div class="name">${state.r.w}</div><button onclick="hide()">Ocultar</button>`;
+ }
+}
+
+function hide(){
+ state.i++;
+ next();
+}
+
+app.innerHTML=`<h2>Impostor</h2><button onclick="start()">Iniciar juego</button>`;
+</script>
+</body>
+</html>

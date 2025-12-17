@@ -1,64 +1,579 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Impostor - Juego Familiar</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Impostor 🕵️‍♂️</title>
 <style>
-body{font-family:-apple-system,Segoe UI,Roboto,Arial;background:#f6f7fb;margin:0}
-.card{max-width:720px;margin:20px auto;background:#fff;border-radius:16px;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,.1)}
-button{padding:14px 16px;border-radius:12px;border:none;background:#111;color:#fff;font-size:16px;font-weight:600}
-.hidden{display:none}
-.name{font-size:26px;font-weight:800;margin:10px 0}
+  :root{
+    --radius:22px;
+    --shadow:0 18px 45px rgba(0,0,0,.22);
+  }
+  [data-theme="dark"]{
+    --bg1:#0b1020; --bg2:#111a3a;
+    --card:rgba(255,255,255,.08);
+    --card2:rgba(15,22,51,.75);
+    --text:#f5f7ff; --muted:rgba(183,192,255,.82);
+    --accent:#7c5cff; --accent2:#2de2e6; --danger:#ff4d6d; --ok:#3bf28f;
+    --line:rgba(255,255,255,.10);
+  }
+  [data-theme="light"]{
+    --bg1:#f6f7fb; --bg2:#eef2ff;
+    --card:rgba(255,255,255,.78);
+    --card2:rgba(255,255,255,.92);
+    --text:#0f1220; --muted:rgba(30,35,60,.70);
+    --accent:#5b5cff; --accent2:#00bcd4; --danger:#e91e63; --ok:#00a86b;
+    --line:rgba(15,18,32,.10);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh; color:var(--text);
+    font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+    padding:18px 14px 22px;
+    background:
+      radial-gradient(1000px 700px at 20% 10%, rgba(124,92,255,.22), transparent 60%),
+      radial-gradient(900px 700px at 80% 20%, rgba(45,226,230,.14), transparent 55%),
+      radial-gradient(900px 700px at 60% 90%, rgba(255,77,109,.10), transparent 55%),
+      linear-gradient(160deg, var(--bg1), var(--bg2));
+  }
+  .wrap{max-width:860px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{
+    width:44px;height:44px;border-radius:14px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 10px 25px rgba(124,92,255,.20);
+    display:grid;place-items:center;font-size:22px;font-weight:900;
+  }
+  .title{line-height:1}
+  .title h1{margin:0;font-size:18px;letter-spacing:.2px}
+  .title p{margin:4px 0 0;font-size:12px;color:var(--muted)}
+  .chip{
+    padding:10px 12px;border-radius:999px;
+    background:rgba(255,255,255,.10);
+    border:1px solid var(--line);
+    color:var(--muted);
+    font-size:12px;
+    backdrop-filter: blur(10px);
+  }
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.06));
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:18px;
+    backdrop-filter: blur(12px);
+  }
+
+  .grid{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:800px){.grid{grid-template-columns:1.35fr .9fr}}
+  .panel{
+    background:var(--card2);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:14px;
+  }
+
+  .badge{
+    display:inline-flex;gap:8px;align-items:center;
+    padding:8px 10px;border-radius:999px;
+    background:rgba(45,226,230,.10);
+    border:1px solid rgba(45,226,230,.18);
+    color:inherit;font-weight:900;font-size:12px;
+  }
+  .h2{margin:8px 0 8px;font-size:22px}
+  .p{margin:0 0 12px;color:var(--muted);line-height:1.35}
+  .rules{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:13px}
+  .rules li{margin:6px 0}
+
+  .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  button{
+    appearance:none;border:0;cursor:pointer;
+    padding:12px 14px;border-radius:16px;
+    font-weight:900;font-size:15px;
+    color:#fff;
+    background:linear-gradient(135deg,var(--accent),#4d7dff);
+    box-shadow:0 12px 25px rgba(124,92,255,.18);
+    transition:transform .08s ease, filter .12s ease;
+  }
+  button:active{transform:translateY(1px);filter:brightness(.96)}
+  button.secondary{
+    color:var(--text);
+    background:rgba(255,255,255,.10);
+    border:1px solid var(--line);
+    box-shadow:none;
+  }
+  button.ghost{
+    color:var(--muted);
+    background:transparent;border:1px dashed rgba(255,255,255,.22);
+    box-shadow:none;font-weight:800;
+  }
+
+  .name{font-size:34px;font-weight:1000;margin:10px 0 2px;letter-spacing:.3px}
+  .sub{color:var(--muted);margin:0 0 12px;font-size:13px}
+
+  .secretTitle{margin:0;color:var(--muted);font-weight:900;font-size:12px;letter-spacing:.8px;text-transform:uppercase}
+  .secret{margin:8px 0 10px;font-size:30px;font-weight:1000;letter-spacing:.3px}
+  .flag{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:1000}
+  .flag.ok{background:rgba(59,242,143,.12);border:1px solid rgba(59,242,143,.22);color:var(--text)}
+  .flag.danger{background:rgba(255,77,109,.12);border:1px solid rgba(255,77,109,.22);color:var(--text)}
+  .tipBox{
+    margin-top:10px;
+    background:rgba(255,255,255,.08);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:12px;
+    color:var(--muted);
+    line-height:1.35;
+    font-size:13px;
+  }
+  .tipBox b{color:var(--text)}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .field{flex:1 1 180px}
+  .field label{display:block;font-size:12px;color:var(--muted);font-weight:900;margin:2px 0 6px}
+  select, .toggle{
+    width:100%;
+    padding:12px 12px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.10);
+    color:var(--text);
+    font-weight:800;
+    outline:none;
+  }
+  .toggle{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .toggle input{transform:scale(1.2)}
+  .footer{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px}
+  .divider{height:1px;background:var(--line);margin:14px 0}
+  .shake{animation:shake .35s linear 1}
+  @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-3px)}100%{transform:translateX(0)}}
+  .fadeIn{animation:fade .22s ease-out 1}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
-<body>
-<div class="card" id="app"></div>
+<body data-theme="dark">
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="logo">🕵️</div>
+      <div class="title">
+        <h1>Impostor</h1>
+        <p>Familia Guerrero Niño · 4 jugadores · 1 impostor</p>
+      </div>
+    </div>
+    <div class="chip" id="chipInfo">Listo para jugar</div>
+  </div>
+  <div class="card fadeIn" id="app"></div>
+  <div class="footer">
+    <div>Tip: pistas, no la palabra. Y el impostor nunca inicia 😉</div>
+    <div>Offline · settings guardados</div>
+  </div>
+</div>
 
 <script>
-const players=["Irwing","Gaby","Sofía","Santiago"];
-const words=[
-{w:"Balón",c:"redondo"},
-{w:"Helado",c:"frío"},
-{w:"Perro",c:"ladra"},
-{w:"Pizza",c:"rebanadas"},
-{w:"Carro",c:"ruedas"}
-];
+(() => {
+  const players = [
+    {name:"Irwing", role:"Papi"},
+    {name:"Gaby", role:"Mami"},
+    {name:"Sofía", role:"Sofy"},
+    {name:"Santiago", role:"Santy"}
+  ];
 
-const app=document.getElementById("app");
-let state={};
+  const bank = {
+    "Comida": [
+      {w:"Pizza", kids:"rebanadas", adult:"horno"},
+      {w:"Taco", kids:"tortilla", adult:"salsa"},
+      {w:"Helado", kids:"frío", adult:"postre"},
+      {w:"Manzana", kids:"roja", adult:"crujiente"},
+      {w:"Chocolate", kids:"dulce", adult:"cacao"},
+      {w:"Palomitas", kids:"cine", adult:"mantequilla"},
+      {w:"Sopa", kids:"caliente", adult:"cuchara"},
+      {w:"Galleta", kids:"cruje", adult:"horneada"},
+      {w:"Pan", kids:"bolillo", adult:"levadura"},
+      {w:"Queso", kids:"amarillo", adult:"derretido"}
+    ],
+    "Casa": [
+      {w:"Cama", kids:"dormir", adult:"almohada"},
+      {w:"Silla", kids:"sentarse", adult:"comedor"},
+      {w:"Cepillo", kids:"dientes", adult:"higiene"},
+      {w:"Toalla", kids:"secar", adult:"baño"},
+      {w:"Televisión", kids:"caricaturas", adult:"control"},
+      {w:"Lámpara", kids:"luz", adult:"noche"},
+      {w:"Refrigerador", kids:"frío", adult:"comida"},
+      {w:"Escoba", kids:"barrer", adult:"limpieza"},
+      {w:"Puerta", kids:"abrir", adult:"llave"},
+      {w:"Ventana", kids:"ver", adult:"cortinas"}
+    ],
+    "Escuela": [
+      {w:"Libro", kids:"páginas", adult:"leer"},
+      {w:"Lápiz", kids:"dibujar", adult:"borrar"},
+      {w:"Tarea", kids:"cuaderno", adult:"entregar"},
+      {w:"Maestra", kids:"salón", adult:"explica"},
+      {w:"Recreo", kids:"jugar", adult:"descanso"},
+      {w:"Mochila", kids:"cargar", adult:"útiles"},
+      {w:"Regla", kids:"medir", adult:"recta"},
+      {w:"Pluma", kids:"tinta", adult:"firma"},
+      {w:"Pizarrón", kids:"gises", adult:"clase"},
+      {w:"Examen", kids:"preguntas", adult:"calificación"}
+    ],
+    "Lugares": [
+      {w:"Parque", kids:"columpios", adult:"pasto"},
+      {w:"Cine", kids:"pantalla", adult:"butacas"},
+      {w:"Playa", kids:"arena", adult:"olas"},
+      {w:"Alberca", kids:"nadar", adult:"cloro"},
+      {w:"Tienda", kids:"comprar", adult:"caja"},
+      {w:"Hospital", kids:"doctor", adult:"consulta"},
+      {w:"Restaurante", kids:"mesero", adult:"menú"},
+      {w:"Zoológico", kids:"animales", adult:"jaulas"},
+      {w:"Iglesia", kids:"banco", adult:"misa"},
+      {w:"Estadio", kids:"gradas", adult:"afición"}
+    ],
+    "Animales": [
+      {w:"Perro", kids:"ladra", adult:"leal"},
+      {w:"Gato", kids:"maulla", adult:"bigotes"},
+      {w:"Pato", kids:"cuac", adult:"lago"},
+      {w:"Conejo", kids:"zanahoria", adult:"orejas"},
+      {w:"Caballo", kids:"correr", adult:"silla"},
+      {w:"León", kids:"rey", adult:"melena"},
+      {w:"Pez", kids:"agua", adult:"branquias"},
+      {w:"Tortuga", kids:"lenta", adult:"caparazón"},
+      {w:"Elefante", kids:"trompa", adult:"enorme"},
+      {w:"Mariposa", kids:"vuela", adult:"alas"}
+    ],
+    "Objetos": [
+      {w:"Balón", kids:"redondo", adult:"equipo"},
+      {w:"Bicicleta", kids:"pedales", adult:"cadena"},
+      {w:"Reloj", kids:"hora", adult:"minutos"},
+      {w:"Teléfono", kids:"llamar", adult:"mensaje"},
+      {w:"Sombrero", kids:"cabeza", adult:"sol"},
+      {w:"Llave", kids:"abrir", adult:"cerradura"},
+      {w:"Paraguas", kids:"lluvia", adult:"mango"},
+      {w:"Lentes", kids:"ver", adult:"graduación"},
+      {w:"Cuchara", kids:"sopa", adult:"mesa"},
+      {w:"Cámara", kids:"foto", adult:"recuerdo"}
+    ]
+  };
 
-function start(){
- const r=words[Math.floor(Math.random()*words.length)];
- const imp=players[Math.floor(Math.random()*players.length)];
- state={r,imp,i:0,order:[...players].sort(()=>Math.random()-.5)};
- next();
-}
+  const personal = {
+    "Irwing":{
+      ok:(w)=>`Papi, te tocó <b>${w}</b>. Juega fino: da una pista real pero “de lado” (sensación, lugar o recuerdo) para no regalarla.`,
+      imp:()=>`Papi impostor 😈: haz preguntas y copia el estilo de pistas. Usa palabras súper generales (“común”, “en casa”, “sirve”).`
+    },
+    "Gaby":{
+      ok:(w)=>`Mami, te tocó <b>${w}</b>. Tu superpoder es lo creativo: usa colores, emociones o escenas (“en la tarde”, “me da antojo”, “me da risa”).`,
+      imp:()=>`Mami impostor 😈: pistas neutras que apliquen a varias cosas (“lo usamos”, “lo he visto”). Evita ser muy específica.`
+    },
+    "Sofía":{
+      ok:(w)=>`Sofy, te tocó <b>${w}</b>. Pista mini y elegante: 1 palabra o 2 máximo. No te emociones con la palabra 😄`,
+      imp:()=>`Sofy impostor 😈: espera escuchar 2 pistas antes de hablar y di algo “seguro” (“me gusta”, “lo conozco”).`
+    },
+    "Santiago":{
+      ok:(w)=>`Santy, te tocó <b>${w}</b>. Tip estratega: da una pista que solo el equipo entienda (“a veces”, “depende”, “con cuidado”).`,
+      imp:()=>`Santy impostor 😈: detecta la categoría (comida/lugar/objeto) y pregunta una cosa para afinar sin delatarte.`
+    }
+  };
 
-function next(){
- if(state.i>=state.order.length){
-  const starters=players.filter(p=>p!==state.imp);
-  app.innerHTML=`<h2>Empieza:</h2><div class="name">${starters[Math.floor(Math.random()*starters.length)]}</div><br><button onclick="start()">Nueva ronda</button>`;
-  return;
- }
- const p=state.order[state.i];
- app.innerHTML=`<div class="name">${p}</div><button onclick="show('${p}')">Ver tarjeta</button>`;
-}
+  const LS_SETTINGS="impostor_settings_v1";
+  const LS_ROT="impostor_rotation_v3";
 
-function show(p){
- if(p===state.imp){
-  app.innerHTML=`<h3>Eres el impostor</h3><div class="name">${state.r.c}</div><button onclick="hide()">Ocultar</button>`;
- } else {
-  app.innerHTML=`<h3>Tu palabra es</h3><div class="name">${state.r.w}</div><button onclick="hide()">Ocultar</button>`;
- }
-}
+  const app=document.getElementById("app");
+  const chip=document.getElementById("chipInfo");
 
-function hide(){
- state.i++;
- next();
-}
+  const S={round:null, impostor:null, order:[], idx:0, starter:null};
 
-app.innerHTML=`<h2>Impostor</h2><button onclick="start()">Iniciar juego</button>`;
+  const settings = loadSettings();
+
+  function loadSettings(){
+    try{
+      const s=JSON.parse(localStorage.getItem(LS_SETTINGS))||{};
+      return {
+        theme: s.theme || "dark",
+        mode: s.mode || "niños", // niños | adultos
+        category: s.category || "Mixto", // Mixto o una categoría
+        sounds: (s.sounds ?? true)
+      };
+    }catch(e){
+      return {theme:"dark", mode:"niños", category:"Mixto", sounds:true};
+    }
+  }
+  function saveSettings(){
+    try{ localStorage.setItem(LS_SETTINGS, JSON.stringify(settings)); }catch(e){}
+    document.body.setAttribute("data-theme", settings.theme);
+  }
+
+  const pick=(arr)=>arr[Math.floor(Math.random()*arr.length)];
+  const shuffle=(arr)=>{
+    const a=arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  };
+
+  function getRotation(){
+    try{ return JSON.parse(localStorage.getItem(LS_ROT))||[]; }catch(e){ return []; }
+  }
+  function setRotation(h){
+    try{ localStorage.setItem(LS_ROT, JSON.stringify(h)); }catch(e){}
+  }
+  function clearRotation(){
+    try{ localStorage.removeItem(LS_ROT); }catch(e){}
+  }
+
+  function chooseImpostor(){
+    let hist=getRotation();
+    if(hist.length>=players.length) hist=[];
+    const names=players.map(p=>p.name);
+    const candidates=names.filter(n=>!hist.includes(n));
+    const chosen=pick(candidates.length?candidates:names);
+    hist.push(chosen);
+    setRotation(hist);
+    return chosen;
+  }
+
+  function buildPool(){
+    const modeKey = settings.mode === "adultos" ? "adult" : "kids";
+    let items=[];
+    if(settings.category==="Mixto"){
+      Object.keys(bank).forEach(cat=>{
+        bank[cat].forEach(x=>{
+          items.push({word:x.w, clue:x[modeKey], cat});
+        });
+      });
+    }else{
+      const cat=settings.category;
+      (bank[cat]||[]).forEach(x=>{
+        items.push({word:x.w, clue:x[modeKey], cat});
+      });
+    }
+    return items;
+  }
+
+  function playTone(type){
+    if(!settings.sounds) return;
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type="sine";
+    const now=ctx.currentTime;
+    const seq = type==="reveal"
+      ? [{f:520,t:0.00},{f:740,t:0.06},{f:980,t:0.12}]
+      : type==="hide"
+      ? [{f:420,t:0.00},{f:320,t:0.06}]
+      : type==="impostor"
+      ? [{f:300,t:0.00},{f:260,t:0.08},{f:220,t:0.16}]
+      : [{f:600,t:0.00}];
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.12, now+0.02);
+    seq.forEach(s=>o.frequency.setValueAtTime(s.f, now+s.t));
+    o.start(now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now+0.28);
+    o.stop(now+0.30);
+    setTimeout(()=>ctx.close().catch(()=>{}), 450);
+  }
+
+  function newRound(){
+    const pool=buildPool();
+    S.round=pick(pool);
+    S.impostor=chooseImpostor();
+    S.order=shuffle(players.map(p=>p.name));
+    S.idx=0;
+    const starters=players.map(p=>p.name).filter(n=>n!==S.impostor);
+    S.starter=pick(starters);
+  }
+
+  function render(html){
+    app.classList.remove("fadeIn");
+    void app.offsetWidth;
+    app.classList.add("fadeIn");
+    app.innerHTML=html;
+  }
+
+  function home(){
+    saveSettings();
+    chip.textContent="Listo para jugar";
+    const hist=getRotation();
+
+    const cats=["Mixto", ...Object.keys(bank)];
+    render(`
+      <div class="grid">
+        <div>
+          <div class="badge">🎭 4 jugadores · 1 impostor · pistas familiares</div>
+          <h2 class="h2">Impostor</h2>
+          <p class="p">Pásense el celular. Cuando salga tu nombre, toca <b>Ver tarjeta</b>, lee en secreto y luego <b>Ocultar</b>.</p>
+          <div class="divider"></div>
+          <div class="row">
+            <div class="field">
+              <label>Modo</label>
+              <select id="modeSel">
+                <option value="niños">Niños (pistas suaves)</option>
+                <option value="adultos">Adultos (pistas menos obvias)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Categoría</label>
+              <select id="catSel">
+                ${cats.map(c=>`<option value="${c}">${c}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div class="field">
+              <label>Tema</label>
+              <select id="themeSel">
+                <option value="dark">Oscuro</option>
+                <option value="light">Claro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Sonidos</label>
+              <div class="toggle">
+                <span>Activar</span>
+                <input type="checkbox" id="sndChk"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="btnRow">
+            <button id="startBtn">Iniciar juego</button>
+            <button class="secondary" id="resetRotBtn">Resetear rotación</button>
+          </div>
+
+          <div class="divider"></div>
+          <div class="small"><b>Reglas rápidas:</b></div>
+          <ul class="rules">
+            <li>Nadie puede decir la palabra exacta.</li>
+            <li>Cada quien da 1 pista por turno.</li>
+            <li>Descubran quién es el impostor.</li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div class="secretTitle">Rotación de impostor</div>
+            <div class="tipBox">
+              <b>Orden actual:</b><br/>
+              ${hist.length ? hist.join(" → ") : "Aún no hay historial."}
+              <div style="margin-top:8px;font-size:12px">Así le toca ser impostor a todos.</div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:12px">
+            <div class="secretTitle">Tip para despistar</div>
+            <div class="tipBox"><b>Truco:</b> usa pistas de lugar, emoción o sensación. Ej: “se siente frío”, “lo ves en el cine”, “me da antojo”.</div>
+          </div>
+        </div>
+      </div>
+    `);
+
+    const modeSel=document.getElementById("modeSel");
+    const catSel=document.getElementById("catSel");
+    const themeSel=document.getElementById("themeSel");
+    const sndChk=document.getElementById("sndChk");
+
+    modeSel.value=settings.mode;
+    catSel.value=settings.category;
+    themeSel.value=settings.theme;
+    sndChk.checked=!!settings.sounds;
+
+    modeSel.onchange=()=>{settings.mode=modeSel.value; saveSettings();};
+    catSel.onchange=()=>{settings.category=catSel.value; saveSettings();};
+    themeSel.onchange=()=>{settings.theme=themeSel.value; saveSettings();};
+    sndChk.onchange=()=>{settings.sounds=!!sndChk.checked; saveSettings();};
+
+    document.getElementById("startBtn").onclick=()=>{
+      saveSettings();
+      playTone("start");
+      newRound();
+      revealCard();
+    };
+    document.getElementById("resetRotBtn").onclick=()=>{
+      clearRotation();
+      home();
+    };
+  }
+
+  function revealCard(){
+    const name=S.order[S.idx];
+    chip.textContent=`Revelando: ${S.idx+1}/${S.order.length}`;
+    render(`
+      <div class="badge">🪪 Tarjeta privada</div>
+      <div class="name">${name}</div>
+      <p class="sub">Pásale el celular a <b>${name}</b>. Que toque el botón cuando nadie esté viendo.</p>
+      <div class="panel">
+        <button id="revealBtn">Ver tarjeta</button>
+        <button class="ghost" id="homeBtn" style="margin-left:10px">Inicio</button>
+        <div class="tipBox" style="margin-top:12px"><b>Tip:</b> tapa la pantalla con la mano si hay mirones 👀</div>
+      </div>
+    `);
+    document.getElementById("revealBtn").onclick=()=>showSecret(name);
+    document.getElementById("homeBtn").onclick=()=>home();
+  }
+
+  function showSecret(name){
+    const isImp=(name===S.impostor);
+    const w=S.round.word;
+    const clue=S.round.clue;
+    const p=personal[name]||{};
+    const msg=isImp ? (p.imp?p.imp():`Eres el impostor 😈. Pista: ${clue}`) : (p.ok?p.ok(w):`Tu palabra es ${w}`);
+    const flag=isImp ? `<span class="flag danger">IMPOSTOR</span>` : `<span class="flag ok">TIENES PALABRA</span>`;
+    const main=isImp ? clue : w;
+
+    playTone(isImp ? "impostor" : "reveal");
+
+    render(`
+      <div class="badge">🔒 Solo para ${name}</div>
+      <div class="name">${name} ${flag}</div>
+      <div class="panel ${isImp?'shake':''}">
+        <div class="secretTitle">${isImp ? "Tu pista relacionada (NO es la palabra)" : "Tu palabra (NO la digas)"}</div>
+        <div class="secret" style="color:${isImp?'var(--danger)':'var(--ok)'}">${main}</div>
+        <div class="tipBox">${msg}</div>
+        <div class="tipBox" style="margin-top:10px">
+          <b>Mini-misión:</b> da una pista que ayude a tu equipo (si tienes palabra) o que no te delate (si eres impostor).
+        </div>
+        <div class="btnRow">
+          <button id="hideBtn">Ocultar y pasar el celular</button>
+        </div>
+      </div>
+    `);
+
+    document.getElementById("hideBtn").onclick=()=>{
+      playTone("hide");
+      S.idx++;
+      if(S.idx<S.order.length) revealCard();
+      else showStart();
+    };
+  }
+
+  function showStart(){
+    chip.textContent="¡Ronda lista!";
+    render(`
+      <div class="badge">✅ Todos listos</div>
+      <h2 class="h2" style="margin-top:10px">¿Quién empieza?</h2>
+      <div class="name" style="margin-top:6px">${S.starter}</div>
+      <p class="sub">El impostor nunca inicia 😉</p>
+      <div class="panel">
+        <div class="secretTitle">Regla de oro</div>
+        <div class="tipBox"><b>Pro tip:</b> el que se va demasiado directo suele ser sospechoso. Pistas cortas ganan.</div>
+        <div class="btnRow">
+          <button id="nextBtn">Siguiente ronda</button>
+          <button class="secondary" id="homeBtn">Inicio</button>
+        </div>
+      </div>
+    `);
+    document.getElementById("nextBtn").onclick=()=>{ playTone("start"); newRound(); revealCard(); };
+    document.getElementById("homeBtn").onclick=()=>home();
+  }
+
+  document.body.setAttribute("data-theme", settings.theme);
+  home();
+})();
 </script>
 </body>
 </html>

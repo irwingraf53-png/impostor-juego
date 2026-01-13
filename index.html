@@ -182,7 +182,7 @@
   </div>
   <div class="card fadeIn" id="app"></div>
   <div class="footer">
-    <div>Tip: pistas, no la palabra. Y el impostor nunca inicia 😉</div>
+    <div>Tip: pistas, no la palabra.</div>
     <div>Offline · settings guardados</div>
   </div>
 </div>
@@ -277,16 +277,16 @@
       imp:()=>`Papi impostor 😈: haz preguntas y copia el estilo de pistas. Usa palabras súper generales (“común”, “en casa”, “sirve”).`
     },
     "Gaby":{
-      ok:(w)=>`Mami, te tocó <b>${w}</b>. Tu superpoder es lo creativo: usa colores, emociones o escenas (“en la tarde”, “me da antojo”, “me da risa”).`,
-      imp:()=>`Mami impostor 😈: pistas neutras que apliquen a varias cosas (“lo usamos”, “lo he visto”). Evita ser muy específica.`
+      ok:()=>`Gaby, recuerda que eres muy guapa. Irwing te ama y Santy y Sofy saben que eres la mejor mamá 💖`,
+      imp:()=>`Gaby impostor 😈: escucha bien las palabras de los demás y con eso intenta adivinar la palabra. Tú puedes 💪`
     },
     "Sofía":{
-      ok:(w)=>`Sofy, te tocó <b>${w}</b>. Pista mini y elegante: 1 palabra o 2 máximo. No te emociones con la palabra 😄`,
+      ok:(w)=>`Sofy, te tocó <b>${w}</b>. Pista mini y elegante: 1 palabra o 2 máximo. Evita lo obvio (ej: en vez de “barrer”, podrías decir “palo”). 😄`,
       imp:()=>`Sofy impostor 😈: espera escuchar 2 pistas antes de hablar y di algo “seguro” (“me gusta”, “lo conozco”).`
     },
     "Santiago":{
       ok:(w)=>`Santy, te tocó <b>${w}</b>. Tip estratega: da una pista que solo el equipo entienda (“a veces”, “depende”, “con cuidado”).`,
-      imp:()=>`Santy impostor 😈: detecta la categoría (comida/lugar/objeto) y pregunta una cosa para afinar sin delatarte.`
+      imp:()=>`Sany impostor 😈: escucha bien las palabras que dicen los demás para identificar la palabra y ganar.`
     }
   };
 
@@ -524,7 +524,9 @@
       <p class="sub">Pásale el celular a <b>${name}</b>. Que toque el botón cuando nadie esté viendo.</p>
       <div class="panel">
         <button id="revealBtn">Ver tarjeta</button>
-        <button class="ghost" id="homeBtn" style="margin-left:10px">Inicio</button>
+        <div style="margin-top:14px">
+          <button class="secondary" id="homeBtn">Inicio</button>
+        </div>
         <div class="tipBox" style="margin-top:12px"><b>Tip:</b> tapa la pantalla con la mano si hay mirones 👀</div>
       </div>
     `);
@@ -550,9 +552,6 @@
         <div class="secretTitle">${isImp ? "Tu pista relacionada (NO es la palabra)" : "Tu palabra (NO la digas)"}</div>
         <div class="secret" style="color:${isImp?'var(--danger)':'var(--ok)'}">${main}</div>
         <div class="tipBox">${msg}</div>
-        <div class="tipBox" style="margin-top:10px">
-          <b>Mini-misión:</b> da una pista que ayude a tu equipo (si tienes palabra) o que no te delate (si eres impostor).
-        </div>
         <div class="btnRow">
           <button id="hideBtn">Ocultar y pasar el celular</button>
         </div>
@@ -573,7 +572,6 @@
       <div class="badge">✅ Todos listos</div>
       <h2 class="h2" style="margin-top:10px">¿Quién empieza?</h2>
       <div class="name" style="margin-top:6px">${S.starter}</div>
-      <p class="sub">El impostor nunca inicia 😉</p>
       <div class="panel">
         <div class="secretTitle">Regla de oro</div>
         <div class="tipBox"><b>Pro tip:</b> el que se va demasiado directo suele ser sospechoso. Pistas cortas ganan.</div>
